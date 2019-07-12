@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHulk", "NHulk\NHulk.csproj", "{7F2D8FFD-ECB8-4633-A265-199467CD994D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHulk.PreGeneration", "NHulk.PreGeneration\NHulk.PreGeneration.csproj", "{31BEE06E-0B28-4171-8CCA-3DDF1DDDF973}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHulk.PreGeneration", "NHulk.PreGeneration\NHulk.PreGeneration.csproj", "{31BEE06E-0B28-4171-8CCA-3DDF1DDDF973}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHulk.Connection", "NHulk.Connection\NHulk.Connection.csproj", "{52941663-22CB-42AC-B6A8-1695EF205865}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{31BEE06E-0B28-4171-8CCA-3DDF1DDDF973}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31BEE06E-0B28-4171-8CCA-3DDF1DDDF973}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31BEE06E-0B28-4171-8CCA-3DDF1DDDF973}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52941663-22CB-42AC-B6A8-1695EF205865}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52941663-22CB-42AC-B6A8-1695EF205865}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52941663-22CB-42AC-B6A8-1695EF205865}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52941663-22CB-42AC-B6A8-1695EF205865}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
