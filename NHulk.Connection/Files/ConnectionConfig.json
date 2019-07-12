@@ -1,0 +1,12 @@
+[
+  {
+    "Name": "XXSystem",
+    "Type": "MySql",
+    "DbName": "db_test",
+    "Address": "192.168.30.1",
+    "Port": "3306",
+    "Username": "root",
+    "Password": "xxxx",
+    "CharacterSet": "UTF8"
+  }
+]

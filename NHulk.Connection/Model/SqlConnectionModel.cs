@@ -1,6 +1,10 @@
-﻿namespace NHulk.PreGeneration.Model
+﻿
+namespace NHulk.Connection.Model
 {
-    public class SqlConnectionModel
+    /// <summary>
+    /// 序列化信息 -- 数据库链接
+    /// </summary>
+    public class SqlConnectionModel: SqlConfigModel
     {
         public string Address;
         public string Port;

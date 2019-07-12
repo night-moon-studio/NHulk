@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NHulk.Connection;
+using System;
 
 namespace NHulk.PreGeneration
 {
@@ -6,7 +7,9 @@ namespace NHulk.PreGeneration
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var result = SqlConfig.GetConnectionString("XXSystem");
+            //Console.WriteLine(result);
+            Console.ReadKey();
         }
     }
 }

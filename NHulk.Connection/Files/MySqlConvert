@@ -1,0 +1,8 @@
+﻿return $@"
+Database={arg.DbName};
+Server={arg.Address};
+uid={arg.Username};
+pwd={arg.Password};
+pooling=true;
+CharSet={arg.CharacterSet};
+port={arg.Port}";
