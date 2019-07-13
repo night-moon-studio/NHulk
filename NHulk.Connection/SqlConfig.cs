@@ -37,13 +37,18 @@ namespace NHulk.Connection
 
             }
         }
-
+        /// <summary>
+        /// 数据库配置文件监控回调事件用于处理数据库配置文件更新后即时重新初始化配置文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void Watcher_Changed(object sender, FileSystemEventArgs e)
         {
             if (e.Name == "ConnectionConfig.json")
             {
                 switch (e.ChangeType)
                 {
+                    //数据库配置文件文件发生更改触发Changed事件重新初始化读取配置文件
                     case WatcherChangeTypes.Changed:
                         Init();
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -60,7 +65,11 @@ namespace NHulk.Connection
                 }
             }
         }
-
+        /// <summary>
+        /// **函数逻辑***
+        /// 1.初始化配置文件
+        /// 2.注册文件监控委托
+        /// </summary>
         static SqlConfig()
         {
             ConfigMapping = new ConcurrentDictionary<string, SqlConnectionModel>();
@@ -92,14 +101,22 @@ namespace NHulk.Connection
                 ConfigMapping[item.Name] = item;
             }
         }
-
+        /// <summary>
+        /// 添加数据库配置信息
+        /// </summary>
+        /// <param name="key">配置信息key键</param>
+        /// <param name="action"></param>
         public void Add(string key, Action<SqlConnectionModel> action)
         {
             var model = new SqlConnectionModel();
             action(model);
             ConfigMapping[key] = model;
         }
-
+        /// <summary>
+        /// 根据K获取配置信息
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public static SqlConnectionModel GetModel(string key)
         {
             if (ConfigMapping.ContainsKey(key))
@@ -108,6 +125,11 @@ namespace NHulk.Connection
             }
             return default;
         }
+        /// <summary>
+        /// 根据K获取数据库配置文件完整字符串
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public static string GetConnectionString(string key)
         {
             if (ConfigMapping.ContainsKey(key))
