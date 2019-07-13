@@ -7,13 +7,17 @@
   <ItemGroup>
     <None Remove="ConnectionConfig.json" />
     <None Remove="Files\MySqlConvert" />
+    <None Remove="Temp\.access" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Files\ConnectionConfig.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Files\MySqlConvert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Temp\.access">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

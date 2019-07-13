@@ -1,10 +1,12 @@
 ﻿using Natasha.Method;
 using NHulk.Connection.Model;
+using NHulk.Connection.Utils;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace NHulk.Connection
 {
@@ -20,8 +22,11 @@ namespace NHulk.Connection
             {
                 if (value)
                 {
-                    _watcher = new FileSystemWatcher(SqlConfig.ConfigDirectory);
-                    _watcher.EnableRaisingEvents = true;
+                    _watcher = new FileSystemWatcher(FileManagement.SqlConfigFolder)
+                    {
+                        EnableRaisingEvents = true,
+                        NotifyFilter = NotifyFilters.LastWrite
+                    };
                     _watcher.Changed += Watcher_Changed;
                 }
                 else
@@ -47,8 +52,8 @@ namespace NHulk.Connection
             for (int i = 0; i < items.Length; i += 1)
             {
                 //根据不同的枚举类型生成不同的文件路径
-                string file = Path.Combine(SqlConfig.ConfigDirectory, items[i] + "Convert");
-                ActionMapping[(SqlEnum)i] = GetFunc(file);
+                string file = Path.Combine(FileManagement.SqlConfigFolder, items[i] + "Convert");
+                ActionMapping[(SqlEnum)i] = GetFunc(File.ReadAllText(file));
                 PathEnumMapping[file] = (SqlEnum)i;
                 WatchPath.Add(file);
             }
@@ -63,39 +68,42 @@ namespace NHulk.Connection
         /// <param name="e"></param>
         private static void Watcher_Changed(object sender, FileSystemEventArgs e)
         {
-            if (e.Name != "ConnectionConfig.json")
+            try
             {
-                ///数据库配置文件发生改变触发Change执行更新配置文件
-                switch (e.ChangeType)
+                _watcher.EnableRaisingEvents = false;
+                if (e.Name != "ConnectionConfig.json")
                 {
-                    case WatcherChangeTypes.Changed:
-                        //更新配置文件内容
-                        ActionMapping[PathEnumMapping[e.FullPath]] = GetFunc(e.FullPath);
-                        break;
-                    case WatcherChangeTypes.Deleted:
-                        throw new Exception("文件为项目文件，不能删除！");
-                    case WatcherChangeTypes.Renamed:
-                        throw new Exception("文件为项目文件，不能重命名！");
-                    default:
-                        break;
+                    //更新配置文件内容
+                    FileInfo info = new FileInfo(e.FullPath);
+                    var temp = Path.Combine(FileManagement.SqlConfigTempFolder, Path.GetFileName(e.FullPath));
+                    info.CopyTo(temp, true);
+                    var body = File.ReadAllText(temp);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine();
+                    Console.WriteLine($"\r\nFile had changed: {body}");
+                    Console.ResetColor();
+                    ActionMapping[PathEnumMapping[e.FullPath]] = GetFunc(body);
                 }
+                _watcher.EnableRaisingEvents = true;
+            }
+            catch (Exception)
+            {
+                Thread.Sleep(FileManagement.Delay);
+                Watcher_Changed(sender, e);
             }
         }
+
+
         /// <summary>
         /// 根据配置文件物理路径名获取配置数据
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
-        private static Func<SqlConnectionModel, string> GetFunc(string file)
+        private static Func<SqlConnectionModel, string> GetFunc(string body)
         {
-            string body;
             try
             {
-                body = File.ReadAllText(file).Replace("\r\n","");
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine();
-                Console.WriteLine($"\r\nFile had changed: {body}");
-                Console.ResetColor();
+                body = body.Replace("\r\n","");
             }
             catch (Exception e)
             {
@@ -106,7 +114,6 @@ namespace NHulk.Connection
       
         public static string GetConnectionString(SqlConnectionModel model)
         {
-          
             return ActionMapping[model.Type](model);
         }
     }

@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
 using NHulk.Connection.Model;
+using NHulk.Connection.Utils;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Threading;
 
 namespace NHulk.Connection
 {
@@ -13,9 +14,6 @@ namespace NHulk.Connection
         public static readonly ConcurrentDictionary<string, SqlConnectionModel> ConfigMapping;
         public static readonly ConcurrentDictionary<string, string> ConnectionStringMapping;
         private static FileSystemWatcher _watcher;
-        public static readonly string ConfigDirectory;
-        private static readonly string _config_path;
-        private static StreamReader _stream;
 
 
         public static bool IsWatchFile
@@ -25,14 +23,16 @@ namespace NHulk.Connection
                 if (value)
                 {
 
-                    _watcher = new FileSystemWatcher(ConfigDirectory);
-                    _watcher.EnableRaisingEvents = true;
+                    _watcher = new FileSystemWatcher(FileManagement.SqlConfigFolder)
+                    {
+                        EnableRaisingEvents = true,
+                        Filter = "ConnectionConfig.json",
+                        NotifyFilter = NotifyFilters.Size
+                    };
                     _watcher.Changed += Watcher_Changed;
-
                 }
                 else
                 {
-
                     _watcher.Changed -= Watcher_Changed;
                     _watcher.Dispose();
                 }
@@ -48,26 +48,15 @@ namespace NHulk.Connection
         /// <param name="e"></param>
         private static void Watcher_Changed(object sender, FileSystemEventArgs e)
         {
-            if (e.Name == "ConnectionConfig.json")
-            {
-                switch (e.ChangeType)
-                {
-                    //数据库配置文件文件发生更改触发Changed事件重新初始化读取配置文件
-                    case WatcherChangeTypes.Changed:
-                        Init();
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine();
-                        Console.WriteLine(GetConnectionString("XXSystem"));
-                        Console.ResetColor();
-                        break;
-                    case WatcherChangeTypes.Deleted:
-                        throw new Exception("文件为项目文件，不能删除！");
-                    case WatcherChangeTypes.Renamed:
-                        throw new Exception("文件为项目文件，不能重命名！");
-                    default:
-                        break;
-                }
-            }
+            _watcher.EnableRaisingEvents = false;
+            //数据库配置文件文件发生更改触发Changed事件重新初始化读取配置文件
+            Init();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine();
+            Console.WriteLine(GetConnectionString("XXSystem"));
+            Console.ResetColor();
+            _watcher.EnableRaisingEvents = true;
+            
         }
 
 
@@ -80,32 +69,32 @@ namespace NHulk.Connection
         {
             ConfigMapping = new ConcurrentDictionary<string, SqlConnectionModel>();
             ConnectionStringMapping = new ConcurrentDictionary<string, string>();
-            ConfigDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files");
-            _config_path = Path.Combine(ConfigDirectory, "ConnectionConfig.json");
-            Init();
             IsWatchFile = true;
         }
 
 
         private static void Init()
         {
-            //string body;
-            //using (StreamReader stream = new StreamReader(_config_path, Encoding.UTF8))
-            //{
-            //    body = await stream.ReadToEndAsync();
-            //}
-            if (_stream==null)
+            try
             {
-                _stream = new StreamReader(_config_path, Encoding.UTF8);
+                FileInfo info = new FileInfo(FileManagement.SqlConfigFile);
+                info.CopyTo(FileManagement.SqlConfigTempFile, true);
+
+                var body = File.ReadAllText(FileManagement.SqlConfigTempFile);
+                var result = JsonConvert.DeserializeObject<List<SqlConnectionModel>>(body);
+
+
+                foreach (var item in result)
+                {
+                    ConfigMapping[item.Name] = item;
+                }
+            }
+            catch (Exception)
+            {
+                Thread.Sleep(FileManagement.Delay);
+                Init();
             }
            
-            //var body = File.ReadAllText(_config_path);
-            var body = _stream.ReadToEndAsync().Result;
-            var result = JsonConvert.DeserializeObject<List<SqlConnectionModel>>(body);
-            foreach (var item in result)
-            {
-                ConfigMapping[item.Name] = item;
-            }
         }
 
 
