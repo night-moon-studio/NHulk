@@ -16,6 +16,8 @@ namespace NHulk.Connection
         public static readonly string ConfigDirectory;
         private static readonly string _config_path;
         private static StreamReader _stream;
+
+
         public static bool IsWatchFile
         {
             set
@@ -37,6 +39,8 @@ namespace NHulk.Connection
 
             }
         }
+
+
         /// <summary>
         /// 数据库配置文件监控回调事件用于处理数据库配置文件更新后即时重新初始化配置文件
         /// </summary>
@@ -65,6 +69,8 @@ namespace NHulk.Connection
                 }
             }
         }
+
+
         /// <summary>
         /// **函数逻辑***
         /// 1.初始化配置文件
@@ -101,6 +107,8 @@ namespace NHulk.Connection
                 ConfigMapping[item.Name] = item;
             }
         }
+
+
         /// <summary>
         /// 添加数据库配置信息
         /// </summary>
@@ -112,6 +120,8 @@ namespace NHulk.Connection
             action(model);
             ConfigMapping[key] = model;
         }
+
+
         /// <summary>
         /// 根据K获取配置信息
         /// </summary>

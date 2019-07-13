@@ -22,6 +22,7 @@ namespace NHulk.Connection
             _link = new Connector();
         }
 
+
         /// <summary>
         /// 获取对应key的读取数据库的IDbConnection初始化委托
         /// </summary>
@@ -104,6 +105,7 @@ namespace NHulk.Connection
             return _link;
         }
 
+
         /// <summary>
         /// 添加一个写连接
         /// </summary>
@@ -132,6 +134,7 @@ namespace NHulk.Connection
             return _link;
         }
 
+
         /// <summary>
         /// 不区分读写添加初始化方案
         /// </summary>
@@ -145,6 +148,7 @@ namespace NHulk.Connection
             return Add<T>(key, value, value);
         }
 
+
         /// <summary>
         /// 添加初始化方案
         /// </summary>
@@ -157,6 +161,7 @@ namespace NHulk.Connection
             _func_cache[key] = (Read: DynamicCreateor<R>(read), Write: DynamicCreateor<W>(write));
             return _link;
         }
+
 
         /// <summary>
         /// 添加初始化方案
@@ -176,6 +181,7 @@ namespace NHulk.Connection
         {
             return $@"return new {type.GetDevelopName()}({connection});".Create<DbCreator>(type);
         }
+
 
         internal static DbCreator DynamicCreateor<T>(string connection)
         {
