@@ -1,0 +1,7 @@
+﻿return $@"
+Initial Catalog={arg.DbName};
+Data Source={arg.Address};
+User Id={arg.Username};
+Password={arg.Password};
+CharSet={arg.CharacterSet};
+port={arg.Port}";

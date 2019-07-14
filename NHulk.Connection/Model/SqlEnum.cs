@@ -5,6 +5,7 @@
     /// </summary>
     public enum SqlEnum
     {
-        MySql
+        MySql,
+        SqlServer
     }
 }
