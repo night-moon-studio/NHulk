@@ -10,7 +10,7 @@
     "CharacterSet": "UTF8"
   },
   {
-    "Name": "XXSystem",
+    "Name": "XXSystem1",
     "Type": "SqlServer",
     "DbName": "db_test",
     "Address": "192.168.30.1",
